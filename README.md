@@ -97,12 +97,26 @@ python app.py
 http://localhost:5000
 ```
 
-## 🚀 Usage
+## 📖 Documentation
+
+For detailed instructions on how to use this application, please refer to:
+
+### 📘 [Complete User Guide](USER_GUIDE.md)
+Comprehensive documentation covering:
+- Account registration and login
+- Dashboard overview and features
+- Pomodoro timer usage
+- Break management strategies
+- Troubleshooting common issues
+- Security and privacy information
+- FAQ and best practices
+
+## 🚀 Quick Start Usage
 
 ### First Time Setup
 1. Navigate to `http://localhost:5000`
 2. Click "Register" to create an account
-3. Enter your email and password
+3. Enter your email and password (min 6 characters)
 4. Login with your credentials
 
 ### Using the Timer

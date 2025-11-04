@@ -27,12 +27,11 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.email}>'
 
-
 def init_db():
     """Initialize database tables"""
     with app.app_context():
         db.create_all()
-
+ 
 
 # Routes
 @app.route("/")
@@ -64,7 +63,7 @@ def home():
     
     # Break time default settings
     break_settings = {
-        'work_duration': 25,  # minutes
+        'study_break': 60,  # minutes
         'short_break': 5,     # minutes
         'long_break': 15,     # minutes
         'sessions_until_long_break': 4
@@ -179,3 +178,7 @@ def logout():
 if __name__ == "__main__":
     init_db()
     app.run(debug=True)
+
+
+
+
