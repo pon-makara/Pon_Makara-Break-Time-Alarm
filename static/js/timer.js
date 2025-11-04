@@ -267,32 +267,35 @@ function playBellOnce(alarmType = 'timer') {
   let bellPattern;
   
   if (alarmType === 'morning') {
+    // Morning: Gentle ascending chime (C-E-G major chord arpeggio)
     bellPattern = [
-      { freq: 659.25, delay: 0, duration: 0.5 },
-      { freq: 523.25, delay: 600, duration: 0.7 }
+      { freq: 523.25, delay: 0, duration: 0.8, volume: 0.5 },      // C5
+      { freq: 659.25, delay: 300, duration: 0.8, volume: 0.55 },   // E5
+      { freq: 783.99, delay: 600, duration: 1.0, volume: 0.6 }     // G5
     ];
   } else if (alarmType === 'afternoon') {
+    // Afternoon: Energetic two-tone school bell (fast Ding-Dong pattern × 2)
     bellPattern = [
-      { freq: 659.25, delay: 0, duration: 0.4 },
-      { freq: 523.25, delay: 500, duration: 0.6 },
-      { freq: 659.25, delay: 1200, duration: 0.4 },
-      { freq: 523.25, delay: 1700, duration: 0.6 }
+      { freq: 880.00, delay: 0, duration: 0.35, volume: 0.65 },     // A5 - Ding
+      { freq: 659.25, delay: 400, duration: 0.6, volume: 0.7 },     // E5 - Dong
+      { freq: 880.00, delay: 1100, duration: 0.35, volume: 0.65 },  // A5 - Ding
+      { freq: 659.25, delay: 1500, duration: 0.6, volume: 0.7 }     // E5 - Dong
     ];
   } else if (alarmType === 'evening') {
+    // Evening: Calm descending wind chime (G-F-E-D)
     bellPattern = [
-      { freq: 659.25, delay: 0, duration: 0.3 },
-      { freq: 523.25, delay: 400, duration: 0.5 },
-      { freq: 659.25, delay: 1000, duration: 0.3 },
-      { freq: 523.25, delay: 1400, duration: 0.5 },
-      { freq: 659.25, delay: 2000, duration: 0.3 },
-      { freq: 523.25, delay: 2400, duration: 0.5 }
+      { freq: 783.99, delay: 0, duration: 0.9, volume: 0.55 },    // G5
+      { freq: 698.46, delay: 350, duration: 0.9, volume: 0.5 },   // F5
+      { freq: 659.25, delay: 700, duration: 0.9, volume: 0.48 },  // E5
+      { freq: 587.33, delay: 1050, duration: 1.2, volume: 0.45 }  // D5
     ];
   } else {
+    // Default timer: Classic two-tone bell (E-C pattern × 2)
     bellPattern = [
-      { freq: 659.25, delay: 0, duration: 0.5 },
-      { freq: 523.25, delay: 600, duration: 0.7 },
-      { freq: 659.25, delay: 1400, duration: 0.5 },
-      { freq: 523.25, delay: 2000, duration: 0.7 }
+      { freq: 659.25, delay: 0, duration: 0.5, volume: 0.6 },
+      { freq: 523.25, delay: 600, duration: 0.7, volume: 0.65 },
+      { freq: 659.25, delay: 1400, duration: 0.5, volume: 0.6 },
+      { freq: 523.25, delay: 2000, duration: 0.7, volume: 0.65 }
     ];
   }
   
@@ -308,7 +311,7 @@ function playBellOnce(alarmType = 'timer') {
       oscillator.type = 'sine';
       
       gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-      gainNode.gain.linearRampToValueAtTime(0.6, audioContext.currentTime + 0.02);
+      gainNode.gain.linearRampToValueAtTime(note.volume, audioContext.currentTime + 0.02);
       gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + note.duration);
       
       oscillator.start(audioContext.currentTime);
@@ -340,9 +343,9 @@ function playAlarm(alarmType = 'timer') {
   
   // Calculate repeat interval based on bell pattern length
   let repeatInterval;
-  if (alarmType === 'morning') repeatInterval = 1500;      // 1.5 seconds
-  else if (alarmType === 'afternoon') repeatInterval = 2500; // 2.5 seconds
-  else if (alarmType === 'evening') repeatInterval = 3500;   // 3.5 seconds
+  if (alarmType === 'morning') repeatInterval = 2000;      // 2 seconds (gentle)
+  else if (alarmType === 'afternoon') repeatInterval = 2200; // 2.2 seconds (energetic)
+  else if (alarmType === 'evening') repeatInterval = 2500;   // 2.5 seconds (calm)
   else repeatInterval = 3000;  // 3 seconds for default
   
   // Loop the alarm every few seconds
