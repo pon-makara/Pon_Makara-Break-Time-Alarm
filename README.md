@@ -78,7 +78,7 @@ cd break-time
 
 2. **Install dependencies**
 ```bash
-pip install -r reqirement.txt
+pip install -r requirements.txt
 ```
 
 3. **Configure the application**
@@ -110,6 +110,54 @@ Comprehensive documentation covering:
 - Troubleshooting common issues
 - Security and privacy information
 - FAQ and best practices
+
+## 🌐 Deployment (Hosting)
+
+This application is ready to deploy on various hosting platforms:
+
+### Deploy to Heroku
+
+1. **Install Heroku CLI** and login:
+```bash
+heroku login
+```
+
+2. **Create a new Heroku app**:
+```bash
+heroku create your-app-name
+```
+
+3. **Set environment variables**:
+```bash
+heroku config:set SECRET_KEY=your-secret-key-here
+heroku config:set FLASK_ENV=production
+```
+
+4. **Deploy**:
+```bash
+git push heroku main
+```
+
+5. **Initialize database**:
+```bash
+heroku run python -c "from app import init_db; init_db()"
+```
+
+### Deploy to Render
+
+1. Create a new Web Service on [Render](https://render.com)
+2. Connect your GitHub repository
+3. Set the following:
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `gunicorn app:app`
+   - **Environment Variables**: Add `SECRET_KEY` and `FLASK_ENV=production`
+
+### Deploy to PythonAnywhere
+
+1. Upload your code to PythonAnywhere
+2. Create a virtual environment and install dependencies
+3. Configure WSGI file to point to your Flask app
+4. Set up static files mapping
 
 ## 🚀 Quick Start Usage
 
@@ -155,7 +203,10 @@ Comprehensive documentation covering:
 Break-Time/
 ├── app.py                 # Main Flask application
 ├── config.py              # Application configuration
-├── reqirement.txt         # Python dependencies
+├── requirements.txt       # Python dependencies
+├── Procfile              # Heroku deployment config
+├── runtime.txt           # Python version for hosting
+├── .gitignore            # Git ignore file
 ├── README.md             # This file
 │
 ├── instance/
@@ -240,7 +291,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👤 Author
 
 **Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
+- GitHub: [pon-makara](https://github.com/pon-makara/Pon_Makara-Break-Time-Alarm)
 
 ## 🙏 Acknowledgments
 

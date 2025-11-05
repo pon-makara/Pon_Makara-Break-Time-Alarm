@@ -158,8 +158,12 @@ function resetTimer() {
 }
 
 // Complete session
-function completeSession() {
+async function completeSession() {
   pauseTimer();
+  
+  // Save session to backend
+  const sessionDuration = Math.ceil((settings[currentMode] || timeRemaining / 60));
+  await saveSessionToBackend(currentMode, sessionDuration);
   
   // ALWAYS play alarm sound when any timer completes
   playAlarm();
@@ -433,9 +437,33 @@ function loadSettings() {
   }
 }
 
+// Save session to backend
+async function saveSessionToBackend(sessionType, duration) {
+  try {
+    const response = await fetch('/api/sessions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        session_type: sessionType,
+        duration: duration
+      })
+    });
+    
+    if (response.ok) {
+      console.log('✅ Session saved to history');
+    } else {
+      console.error('❌ Failed to save session');
+    }
+  } catch (error) {
+    console.error('❌ Error saving session:', error);
+  }
+}
+
 // Quick action functions
 function viewHistory() {
-  alert('History feature - Track all your completed sessions and breaks over time');
+  window.location.href = '/history';
 }
 
 function exportData() {
