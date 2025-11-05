@@ -291,7 +291,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👤 Author
 
 **Your Name**
-- GitHub: [pon-makara](https://github.com/pon-makara/Pon_Makara-Break-Time-Alarm)
+- GitHub: [pon-makara] (https://github.com/pon-makara/Pon_Makara-Break-Time-Alarm)
 
 ## 🙏 Acknowledgments
 
@@ -303,8 +303,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 If you have any questions or need help, please:
 - Open an issue on GitHub
-- Contact: your.email@example.com
-
+- Contact:makara.pon@student.passerellesnumeriques.org
 ---
 
 **Happy Productivity! 🚀**
