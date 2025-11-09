@@ -1,6 +1,7 @@
 // Break Time Timer Application
 let timer = null;
 let timeRemaining = 25 * 60; // seconds
+let lastSessionMinutes = 25; // tracks the intended minutes for the current session (work/short/long/custom)
 let currentMode = 'work';
 let isRunning = false;
 let sessionsCompleted = 0;
@@ -46,6 +47,7 @@ function setMode(mode, minutes) {
   
   currentMode = mode;
   timeRemaining = minutes * 60;
+  lastSessionMinutes = minutes;
   updateDisplay();
   
   // Update active tab
@@ -112,6 +114,7 @@ function setCustomTime() {
   
   currentMode = 'custom';
   timeRemaining = (minutes * 60) + seconds;
+  lastSessionMinutes = minutes + Math.ceil(seconds / 60);
   updateDisplay();
   
   document.getElementById('timer-mode').textContent = 'Custom Timer';
@@ -162,7 +165,11 @@ async function completeSession() {
   pauseTimer();
   
   // Save session to backend
-  const sessionDuration = Math.ceil((settings[currentMode] || timeRemaining / 60));
+  // Prefer the last intended minutes for this session; fallback to settings as a safety
+  let sessionDuration = lastSessionMinutes;
+  if (!sessionDuration || isNaN(sessionDuration)) {
+    sessionDuration = Math.ceil(settings[currentMode] || 0);
+  }
   await saveSessionToBackend(currentMode, sessionDuration);
   
   // ALWAYS play alarm sound when any timer completes
@@ -600,8 +607,35 @@ function showAlarmStatus() {
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-  loadSettings();
+  // Always initialize scheduled alarms on every page
   loadScheduledAlarms();
+  console.log('✅ Scheduled Alarms Loaded');
+  console.log('🔔 Daily alarms will automatically play at:');
+  console.log('   🌅 Morning:', scheduledAlarms.morning);
+  console.log('   ☀️ Afternoon:', scheduledAlarms.afternoon);
+  console.log('   🌙 Evening:', scheduledAlarms.evening);
+  console.log('⏰ Checking for scheduled alarms every 60 seconds...');
+
+  // Check for scheduled alarms every minute
+  setInterval(() => {
+    checkScheduledAlarms();
+    showAlarmStatus();
+  }, 60000); // Check every 60 seconds
+
+  checkScheduledAlarms(); // Check immediately on load
+  showAlarmStatus(); // Show initial status
+
+  // Update status display every 10 seconds (no-op on pages without status element)
+  setInterval(showAlarmStatus, 10000);
+
+  // Only initialize timer UI features on pages that contain the timer elements
+  const hasTimerUI = document.getElementById('timer-display') && document.getElementById('timer-mode');
+  if (!hasTimerUI) {
+    console.log('⏱️ Timer UI not found on this page. Skipping timer UI initialization.');
+    return;
+  }
+
+  loadSettings();
   initTimer();
   
   // Add event listeners for timer tabs
@@ -617,25 +651,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
-  
-  console.log('✅ Break Time Alarm System Loaded');
-  console.log('🔔 Daily alarms will automatically play at:');
-  console.log('   🌅 Morning:', scheduledAlarms.morning);
-  console.log('   ☀️ Afternoon:', scheduledAlarms.afternoon);
-  console.log('   🌙 Evening:', scheduledAlarms.evening);
-  console.log('⏰ Checking for scheduled alarms every 60 seconds...');
-  
-  // Check for scheduled alarms every minute
-  setInterval(() => {
-    checkScheduledAlarms();
-    showAlarmStatus();
-  }, 60000); // Check every 60 seconds
-  
-  checkScheduledAlarms(); // Check immediately on load
-  showAlarmStatus(); // Show initial status
-  
-  // Update status display every 10 seconds
-  setInterval(showAlarmStatus, 10000);
 });
 
 // Clean up on page unload

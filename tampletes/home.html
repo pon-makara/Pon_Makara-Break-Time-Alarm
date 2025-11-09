@@ -22,7 +22,7 @@
   <!-- Timer Section -->
   <div class="card timer-card">
     <div class="timer-header">
-      <h2 class="timer-mode" id="timer-mode">Work Session</h2>
+      <h2 class="timer-mode" id="timer-mode">Class break</h2>
       <div class="timer-status" id="timer-status">Ready</div>
     </div>
     
@@ -47,7 +47,7 @@
 
     <div class="timer-tabs">
       <button class="timer-tab active" data-mode="work" data-minutes="{{ break_settings.work_duration }}">
-        Work ({{ break_settings.work_duration }}m)
+        Class ({{ break_settings.work_duration }}m)
       </button>
       <button class="timer-tab" data-mode="short" data-minutes="{{ break_settings.short_break }}">
         Short Break ({{ break_settings.short_break }}m)
@@ -83,13 +83,13 @@
   <!-- Statistics Grid -->
   <div class="stats-grid">
     <div class="card stat-card">
-      <div class="stat-icon">🔥</div>
+      <div class="stat-icon">🧑‍🏫</div>
       <div class="stat-value" id="sessions-completed">0</div>
       <div class="stat-label">Sessions Today</div>
     </div>
 
     <div class="card stat-card">
-      <div class="stat-icon">☕</div>
+      <div class="stat-icon">🏫</div>
       <div class="stat-value">{{ total_breaks_today }}</div>
       <div class="stat-label">Breaks Taken</div>
     </div>

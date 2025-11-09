@@ -10,7 +10,6 @@ app = Flask(__name__, template_folder="tampletes")
 app.config.from_object(Config)
 
 db = SQLAlchemy(app)
-
 # User Model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -31,6 +30,7 @@ class User(db.Model):
 
 
 # Session History Model
+
 class TimerSession(db.Model):
     __tablename__ = 'session'
     id = db.Column(db.Integer, primary_key=True)
@@ -41,6 +41,7 @@ class TimerSession(db.Model):
     
     def to_dict(self):
         """Convert session to dictionary for JSON serialization"""
+
         return {
             'id': self.id,
             'session_type': self.session_type,
@@ -93,8 +94,7 @@ def home():
         'short_break': 5,     # minutes
         'long_break': 15,     # minutes
         'sessions_until_long_break': 4
-    }
-    
+    }   
     # Prepare dashboard data
     dashboard_data = {
         'user': user,
@@ -192,7 +192,6 @@ def login():
 
     return render_template("login.html")
 
-
 @app.route("/logout")
 def logout():
     """Logout function - clears user session"""
@@ -224,7 +223,6 @@ def save_session():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
-
 
 @app.route("/api/sessions", methods=["GET"])
 def get_sessions():
@@ -258,6 +256,7 @@ def history():
         flash("Please log in to access this page", "error")
         return redirect(url_for("login"))
     
+    
     user = User.query.get(user_id)
     if not user:
         session.clear()
@@ -272,7 +271,6 @@ if __name__ == "__main__":
     # Use PORT from environment variable for hosting platforms
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=False)
-
 
 
 

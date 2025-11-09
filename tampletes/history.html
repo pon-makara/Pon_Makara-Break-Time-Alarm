@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block title %}History{% endblock %}
+{% block content %}
+  <div class="dashboard-header">
+    <div>
+      <h1 class="title">📅 Session History</h1>
+      <p class="muted small">{{ user.email }}</p>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <a href="{{ url_for('home') }}" class="btn">← Back to Dashboard</a>
+      <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+    </div>
+  </div>
+
+  {% with messages = get_flashed_messages(category_filter=['error','info','success']) %}
+    {% if messages %}
+      <div class="alerts">
+        {% for m in messages %}
+          <div class="alert alert-success">{{ m }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="card settings-card">
+    <h3 class="section-title">Filters</h3>
+    <div class="settings-grid">
+      <div class="setting-item">
+        <label>Type</label>
+        <select id="filter-type">
+          <option value="">All</option>
+          <option value="work">Class</option>
+          <option value="short">Short Break</option>
+          <option value="long">Long Break</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+      <div class="setting-item">
+        <label>Date</label>
+        <input type="date" id="filter-date" />
+      </div>
+    </div>
+    <button class="btn primary" id="apply-filters" style="margin-top:12px;">Apply</button>
+  </div>
+
+  <div class="card">
+    <h3 class="section-title">Recent Sessions</h3>
+    <div style="overflow:auto;">
+      <table class="table" style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr>
+            <th style="text-align:left; padding:8px;">#</th>
+            <th style="text-align:left; padding:8px;">Type</th>
+            <th style="text-align:left; padding:8px;">Duration</th>
+            <th style="text-align:left; padding:8px;">Date</th>
+            <th style="text-align:left; padding:8px;">Time</th>
+          </tr>
+        </thead>
+        <tbody id="sessions-body">
+        </tbody>
+      </table>
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px;">
+      <div class="muted small" id="summary">0 sessions</div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="btn" id="load-more">Load more</button>
+        <button class="btn" id="refresh">Refresh</button>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function(){
+  const tbody = document.getElementById('sessions-body');
+  const summary = document.getElementById('summary');
+  const filterType = document.getElementById('filter-type');
+  const filterDate = document.getElementById('filter-date');
+  const btnApply = document.getElementById('apply-filters');
+  const btnMore = document.getElementById('load-more');
+  const btnRefresh = document.getElementById('refresh');
+
+  let limit = 50;
+  let allSessions = [];
+
+  function fmtType(t){
+    if (t === 'work') return 'Class';
+    if (t === 'short') return 'Short Break';
+    if (t === 'long') return 'Long Break';
+    if (t === 'custom') return 'Custom';
+    return t;
+  }
+
+  function render(items){
+    tbody.innerHTML = '';
+    items.forEach((s, i) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="padding:8px;">${i+1}</td>
+        <td style="padding:8px;">${fmtType(s.session_type)}</td>
+        <td style="padding:8px;">${s.duration}m</td>
+        <td style="padding:8px;">${s.date}</td>
+        <td style="padding:8px;">${s.time}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+    summary.textContent = `${items.length} of ${allSessions.length} loaded`;
+  }
+
+  async function fetchSessions(){
+    const res = await fetch(`/api/sessions?limit=${limit}`);
+    if (!res.ok) {
+      summary.textContent = 'Failed to load sessions';
+      return;
+    }
+    const data = await res.json();
+    allSessions = data.sessions || [];
+    applyFilters();
+  }
+
+  function applyFilters(){
+    let items = [...allSessions];
+    const t = filterType.value;
+    const d = filterDate.value;
+    if (t) items = items.filter(s => s.session_type === t);
+    if (d) items = items.filter(s => s.date === d);
+    render(items);
+  }
+
+  btnApply.addEventListener('click', applyFilters);
+  btnRefresh.addEventListener('click', fetchSessions);
+  btnMore.addEventListener('click', () => { limit = Math.min(limit + 50, 500); fetchSessions(); });
+
+  fetchSessions();
+})();
+</script>
+{% endblock %}
